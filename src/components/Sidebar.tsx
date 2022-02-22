@@ -85,7 +85,7 @@ const Sidebar = () => {
         <div className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style={{ minHeight: "100vh", height: "100%", position: "fixed", top: 0, left: 0, width: "280px" }}>
             <h1 className="display-1 fs-4 text-center my-3">80s Conservation Club</h1>
             <hr />
-            <ul className="nav nav-pills flex-column mb-auto" style={{ overflowY: "scroll", flexWrap: 'nowrap' }}>
+            <ul className="nav nav-pills flex-column mb-auto h-100 disable-scrollbar" style={{ overflowY: "scroll", flexWrap: 'nowrap' }}>
                 {links.map(x => { return <SidebarLink key={x.href} href={x.href} name={x.name} Icon={x.Icon} /> })}
             </ul>
             <hr />
