@@ -26,9 +26,10 @@ const DocumentIcon = () => {
 }
 
 const SidebarLink = ({ href, name, Icon }: SidebarLinkProps) => {
+    const currentPath = window.location.pathname
     return (
         <li className="nav-item d-flex">
-            <Link to={href} className="nav-link"><span className="my-auto me-2 text-white"><Icon /></span> {name}</Link>
+            <Link to={href} className={`nav-link ${href === currentPath ? 'active' : ''}`}><span className="my-auto me-2 text-white"><Icon /></span> {name}</Link>
         </li>
     )
 }
