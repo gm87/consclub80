@@ -8,7 +8,7 @@ const Rules = () => {
         <SidebarWithContent>
             <Container fluid className="bg-light h-100 pe-5">
                 <Row>
-                    <Col><h1 className="display-1 fs-1 text-center mt-3 mb-5">Rules</h1></Col>
+                    <Col><h1 className="display-1 fs-1 text-center mt-3 mb-3">Rules</h1></Col>
                 </Row>
                 <Row>
                     <Col><h3 className="display-4 fs-1 text-center mt-3">GENERAL</h3></Col>
