@@ -1,0 +1,13 @@
+New Sponsorship Form
+
+Name of Sponsor: {{SponsorName}}
+Sponsored Client: {{ApplicantName}}
+Address: {{Address1}}
+		 {{Address2}}
+		 {{City}}, {{State}} {{Zip}}
+Phone: {{Phone}}
+Spouse: {{Spouse}}
+Children: {{Children}}
+Have you ever been convicted of a felony drug charge?: {{Drugs}}
+Are you required to register as a sex offender?: {{SexOffender}}
+Reasons for wanting to become a member: {{Reasons}}
