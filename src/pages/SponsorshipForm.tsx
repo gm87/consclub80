@@ -2,9 +2,12 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
+import Modal from "react-bootstrap/Modal"
+import Spinner from "react-bootstrap/Spinner"
 import SidebarWithContent from "../layouts/SidebarWithContent"
 import States from "../assets/states.json"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 
 interface SponsorshipFormData {
     SponsorName: string
@@ -24,6 +27,9 @@ interface SponsorshipFormData {
 
 const SponsorshipForm = () => {
 
+    const [error, setError] = useState<string[] | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [success, setSuccess] = useState<boolean>(false)
     const [data, setData] = useState<SponsorshipFormData>({
         SponsorName: '',
         ApplicantName: '',
@@ -61,12 +67,107 @@ const SponsorshipForm = () => {
     }
 
     const handleSubmit = () => {
-        console.log(data)
+        let errors = []
+        if (!data.SponsorName)
+            errors.push(`You must enter the Sponsor's name.`)
+        if (!data.ApplicantName)
+            errors.push(`You must enter the Applicant's name.`)
+        if (!data.Address1)
+            errors.push(`You must include your address.`)
+        if (!data.City)
+            errors.push(`You must enter your city.`)
+        if (!data.State)
+            errors.push(`You must enter your state.`)
+        if (!data.Zip)
+            errors.push(`You must enter your zip code.`)
+        if (!data.Phone)
+            errors.push(`You must enter your phone.`)
+        if (data.Drugs === null)
+            errors.push(`You must specifcy if you've been convicted of a drug charge.`)
+        if (data.SexOffender === null)
+            errors.push(`You must specify if you're required to register as a sex offender.`)
+        if (errors.length > 0)
+            setError(errors)
+        else {
+            setLoading(true)
+            fetch(`https://api.80sconservationclub.com/sponsorship`, {
+                body: JSON.stringify(data),
+                method: "POST"
+            })
+            .then(response => response.json())
+            .then(json => {
+                if (json.statusCode === 200) {
+                    setSuccess(true)
+                    setLoading(false)
+                }
+                else {
+                    setError(['Something went wrong. Try again later.'])
+                    setLoading(false)
+                }
+            })
+            .catch(err => {
+                console.error(err)
+            })
+        }
+    }
+
+    if (success) {
+        return (
+            <SidebarWithContent>
+                <Container fluid className="bg-light h-100">
+                    <Row>
+                        <Col><h1 className="display-1 fs-1 text-center text-success mt-3">Success!</h1></Col>
+                    </Row>
+                    <Row>
+                        <Col><p className="text-center mt-3">We've received your application! We'll contact you soon!</p></Col>
+                    </Row>
+                    <Row>
+                        <Col className="text-center">
+                            <Link to="/"><Button variant="success">Return Home</Button></Link>
+                        </Col>
+                    </Row>
+                </Container>
+            </SidebarWithContent>
+        )
+    }
+
+    if (loading) {
+        return (
+            <SidebarWithContent>
+                <Container fluid className="bg-light h-100">
+                    <Row className="py-5">
+                        <Col className="text-center">
+                            <Spinner animation="border" variant="secondary" />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <h1 className="display-1 fs-1 fw-light text-center">Please Wait</h1>
+                        </Col>
+                    </Row>
+                </Container>
+            </SidebarWithContent>
+        )
     }
 
     return (
         <SidebarWithContent>
             <Container fluid className="bg-light h-100">
+                <Modal show={!!error} onHide={() => setError(null)}>
+                    <Modal.Header closeButton>
+                        Whoops!
+                    </Modal.Header>
+                    <Modal.Body>
+                        <ul>
+                            { error?.map(x => { return <li key={x}>{x}</li> })}
+                        </ul>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <p className="d-flex justify-content-end">
+                            <Button variant="danger" onClick={() => setError(null)}>Close</Button>
+                        </p>
+                    </Modal.Footer>
+                </Modal>
                 <Row>
                     <Col><h1 className="display-1 fs-1 text-center mt-3">Sponsorship Form</h1></Col>
                 </Row>
