@@ -12,10 +12,8 @@ const SidebarWithContent = ({ children }: props) => {
     return (
         <Container fluid>
             <Row>
-                <Col xs={2} className="px-0">
-                    <Sidebar />
-                </Col>
-                <Col xs={10} className="px-0">
+                <Sidebar />
+                <Col className="px-0" style={{ marginLeft: "280px", minHeight: "100vh" }}>
                     { children }
                 </Col>
             </Row>

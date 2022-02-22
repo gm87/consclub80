@@ -15,7 +15,7 @@ const Rules = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <ul className="px-5 mx-5">
+                        <ul className="px-lg-5 mx-lg-5">
                             <li>Any member having a group of non-members of more than ten (10) should notify a member of the Board of Directors beforehand.</li>
                             <li>Children may not use club unless there is a responsible member present.</li>
                             <li>Guests are the responsibility of the member bringing them.</li>
@@ -34,7 +34,7 @@ const Rules = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <ul className="px-5 mx-5">
+                        <ul className="px-lg-5 mx-lg-5">
                             <li>No clubhouse or porch furniture should be taken from the building.</li>
                             <li>No cooking of any kind in the clubhouse or porch except in the kitchen on the electric stove or in the microwave.</li>
                             <li>Leave the driveway around the clubhouse clear at all times. No parking in the road.</li>
@@ -50,7 +50,7 @@ const Rules = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <ul className="px-5 mx-5">
+                        <ul className="px-lg-5 mx-lg-5">
                             <li>Clean up area used. TAKE ALL GARBAGE HOME WITH YOU. Leave only paper in barrels and burn at once.</li>
                             <li>Put aluminum cans in containers marked for them.</li>
                             <li>Do not put cans or glass containers of any kind in the trash barrels. Take them home with you.</li>
@@ -69,7 +69,7 @@ const Rules = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <ul className="px-5 mx-5">
+                        <ul className="px-lg-5 mx-lg-5">
                             <li className="fw-bold">NO LIFEGUARD IS ON DUTY.</li>
                             <li>Children under 16 must have a responsible adult (18 years or older) supervising them at the beach while swimming or boating.</li>
                             <li>No swimming outside the marked swimming area.</li>
@@ -90,7 +90,7 @@ const Rules = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <ul className="px-5 mx-5">
+                        <ul className="px-lg-5 mx-lg-5">
                             <li>All target practice should take place on the range only.</li>
                             <li>Do not shoot at any target that is not backed by a backstop.</li>
                             <li>Shooting of fireworks should be confined to the rifle range.</li>
@@ -104,7 +104,7 @@ const Rules = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <ul className="px-5 mx-5">
+                        <ul className="px-lg-5 mx-lg-5">
                             <li>All hunting is for members only (no guests).  Deer hunting bow only, no guns.</li>
                         </ul>
                     </Col>
