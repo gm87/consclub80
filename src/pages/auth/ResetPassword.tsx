@@ -24,7 +24,7 @@ const ResetPassword = ({ user, completeForgotPassword }: ResetPasswordProps) => 
     }
 
     const handleSubmit = () => {
-
+        
     }
 
     return (

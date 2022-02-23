@@ -69,6 +69,17 @@ const App = () => {
         })
     }
 
+    const completeForgotPassword = (email: string, code: string, password: string): Promise<any> => {
+        return new Promise((resolve, reject) => {
+            cognito.CompleteForgotPassword(email, code, password)
+            .then(() => {
+                signIn(email, password)
+                resolve('')
+            })
+            .catch(err => reject(err))
+        })
+    }
+
     return (
         <Router>
             <Routes>
@@ -78,7 +89,7 @@ const App = () => {
                 <Route path='/bylaws' element={<Bylaws user={cognitoUser.data} />} />
                 <Route path='/rules' element={<Rules user={cognitoUser.data} />} />
                 <Route path='/auth/login' element={<NoAuthRoute user={cognitoUser}><Login user={cognitoUser.data} signIn={signIn} changePassword={changePassword} /></NoAuthRoute>} />
-                <Route path='/auth/forgot-password' element={<NoAuthRoute user={cognitoUser}><ForgotPassword user={cognitoUser.data} sendForgotPasswordEmail={cognito.SendForgotPasswordEmail} /></NoAuthRoute>} />
+                <Route path='/auth/forgot-password' element={<NoAuthRoute user={cognitoUser}><ForgotPassword user={cognitoUser.data} sendForgotPasswordEmail={cognito.SendForgotPasswordEmail} completeForgotPassword={completeForgotPassword} /></NoAuthRoute>} />
                 <Route path='/auth/reset-password' element={<NoAuthRoute user={cognitoUser}><ResetPassword user={cognitoUser.data} completeForgotPassword={cognito.CompleteForgotPassword} /></NoAuthRoute>} />
                 <Route path='/myaccount' element={<AuthRequiredRoute user={cognitoUser}><MyAccount user={cognitoUser.data} signOut={signOut} /></AuthRequiredRoute>} />
             </Routes>

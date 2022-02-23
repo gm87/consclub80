@@ -108,17 +108,19 @@ class Cognito {
     }
 
     public SendForgotPasswordEmail = (email: string) => {
-        const cognitoUser = new CognitoUser({
-            Username: email,
-            Pool: this.CognitoUserPool
-        })
-        cognitoUser.forgotPassword({
-            onSuccess: (result) => {
-                console.log(result)
-            },
-            onFailure: (err) => {
-                console.error(err)
-            }
+        return new Promise((resolve, reject) => {
+            const cognitoUser = new CognitoUser({
+                Username: email,
+                Pool: this.CognitoUserPool
+            })
+            cognitoUser.forgotPassword({
+                onSuccess: (result) => {
+                    resolve(result)
+                },
+                onFailure: (err) => {
+                    reject(err)
+                }
+            })
         })
     }
 
