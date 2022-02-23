@@ -2,6 +2,7 @@ import { CognitoUserAttribute } from "amazon-cognito-identity-js"
 import { useState } from "react"
 import Button from "react-bootstrap/Button"
 import { Link } from "react-router-dom"
+import UserAccountSidebarMobile from "./UserAccountSidebarMobile"
 
 interface SidebarLinkProps {
     href: string
@@ -115,6 +116,7 @@ const SidebarMobile = ({ user }: SidebarMobileProps) => {
                 <ul className="nav nav-pills flex-column mb-auto">
                     {links.map(x => { return <MobileSidebarLinkIconOnly key={x.href} href={x.href} name={x.name} Icon={x.Icon} /> })}
                 </ul>
+                <UserAccountSidebarMobile user={user} collapsed={collapsed} />
             </div>
         )
     }
@@ -128,7 +130,7 @@ const SidebarMobile = ({ user }: SidebarMobileProps) => {
                 {links.map(x => { return <MobileSidebarLink key={x.href} href={x.href} name={x.name} Icon={x.Icon} /> })}
             </ul>
             <hr />
-            <div className="mb-3 text-white">Username Here</div>
+            <UserAccountSidebarMobile collapsed={collapsed} user={user} />
         </div>
     )
 }

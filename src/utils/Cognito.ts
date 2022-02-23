@@ -25,13 +25,13 @@ class Cognito {
         const refreshTokenKey = `${keyPrefix}.refreshToken`
         const lastUserKey = `${keyPrefix}.LastAuthUser`
 
-        localStorage.setItem(idTokenKey, `.${cognitoUserSession.getIdToken().getJwtToken()}`)
-        localStorage.setItem(accessTokenKey, `${keyPrefix}.${cognitoUserSession.getAccessToken().getJwtToken()}`)
-        localStorage.setItem(refreshTokenKey, `${keyPrefix}.${cognitoUserSession.getRefreshToken().getToken()}`)
+        localStorage.setItem(idTokenKey, cognitoUserSession.getIdToken().getJwtToken())
+        localStorage.setItem(accessTokenKey, cognitoUserSession.getAccessToken().getJwtToken())
+        localStorage.setItem(refreshTokenKey, cognitoUserSession.getRefreshToken().getToken())
         localStorage.setItem(lastUserKey, username)
     }
 
-    public SignIn = (username: string, password: string): Promise<CognitoUserSession> => {
+    public SignIn = (username: string, password: string): Promise<CognitoUserAttribute[] | null> => {
         return new Promise((resolve, reject) => {
             this.CognitoUser = new CognitoUser({ Username: username, Pool: this.CognitoUserPool })
             this.CognitoUser.authenticateUser(new AuthenticationDetails({
@@ -39,10 +39,16 @@ class Cognito {
                 Password: password
             }), {
                 onSuccess: (result) => {
-                    console.log(result)
-                    resolve(result)
+                    resolve(this.GetUser())
                     this.CognitoUserSession = result
                     this.CacheTokens(result, username)
+                    console.log(result)
+                },
+                newPasswordRequired: (userAttributes) => {
+                    reject({
+                        message: `New password required.`,
+                        userAttributes
+                    })
                 },
                 onFailure: (err) => {
                     reject(err)
@@ -69,43 +75,62 @@ class Cognito {
         })
     }
 
-    // Get the user's session, used when user closes + reopens web application
-    public GetSession = () => {
-        const keyPrefix = `CognitoIdentityServiceProvider.${this.CognitoUserPool.getClientId()}`
-        const idTokenKey = `${keyPrefix}.idToken`
-        const accessTokenKey = `${keyPrefix}.accessToken`
-        const refreshTokenKey = `${keyPrefix}.refreshToken`
-        const lastUserKey = `${keyPrefix}.LastAuthUser`
-
-        const idToken = new CognitoIdToken({ IdToken: localStorage.getItem(idTokenKey) || '' })
-        const accessToken = new CognitoAccessToken({ AccessToken: localStorage.getItem(accessTokenKey) || '' })
-        const refreshToken = new CognitoRefreshToken({ RefreshToken: localStorage.getItem(refreshTokenKey) || '' })
-
-        const cachedSession = new CognitoUserSession({
-            IdToken: idToken,
-            AccessToken: accessToken,
-            RefreshToken: refreshToken
+    public ChangePassword = (newPassword: string, userAttributes: any) => {
+        if (!this.CognitoUser)
+            throw new Error(`Cognito User not initialized.`)
+        this.CognitoUser.completeNewPasswordChallenge(newPassword, userAttributes, {
+            onSuccess: (result) => {
+                this.CognitoUserSession = result
+                this.CacheTokens(result, userAttributes.email)
+            },
+            onFailure: (err) => {
+                console.log(err)
+            }
         })
+    }
 
-        if (cachedSession.isValid()) {
-            this.CognitoUserSession = cachedSession
-        } else {
-            this.CognitoUser = new CognitoUser({
-                Username: localStorage.getItem(lastUserKey) || '',
-                Pool: this.CognitoUserPool
+    // Get the user's session, used when user closes + reopens web application
+    public GetSession = (): Promise<boolean> => {
+        return new Promise((resolve, reject) => {
+            const keyPrefix = `CognitoIdentityServiceProvider.${this.CognitoUserPool.getClientId()}`
+            const idTokenKey = `${keyPrefix}.idToken`
+            const accessTokenKey = `${keyPrefix}.accessToken`
+            const refreshTokenKey = `${keyPrefix}.refreshToken`
+            const lastUserKey = `${keyPrefix}.LastAuthUser`
+
+            const idToken = new CognitoIdToken({ IdToken: localStorage.getItem(idTokenKey) || '' })
+            const accessToken = new CognitoAccessToken({ AccessToken: localStorage.getItem(accessTokenKey) || '' })
+            const refreshToken = new CognitoRefreshToken({ RefreshToken: localStorage.getItem(refreshTokenKey) || '' })
+
+            const cachedSession = new CognitoUserSession({
+                IdToken: idToken,
+                AccessToken: accessToken,
+                RefreshToken: refreshToken
             })
-            this.CognitoUser.refreshSession(refreshToken, (err, res) => {
-                if (err) {
-                    if (err.code === "InvalidParameterException" && err.message === "Missing required parameter REFRESH_TOKEN") {
-                        this.CognitoUserSession = null
+
+            if (cachedSession.isValid()) {
+                this.CognitoUserSession = cachedSession
+                resolve(true)
+            } else {
+                this.CognitoUser = new CognitoUser({
+                    Username: localStorage.getItem(lastUserKey) || '',
+                    Pool: this.CognitoUserPool
+                })
+                this.CognitoUser.refreshSession(refreshToken, (err, res) => {
+                    if (err) {
+                        if (err.code === "InvalidParameterException" && err.message === "Missing required parameter REFRESH_TOKEN") {
+                            this.CognitoUserSession = null
+                            resolve(false)
+                        } else {
+                            reject(err)
+                        }
                     } else {
-                        console.error(err)
+                        this.CognitoUserSession = res
+                        resolve(true)
                     }
-                } else {
-                    this.CognitoUserSession = res
-                }
-            })
-        }
+                })
+            }
+        })
     }
 }
 
