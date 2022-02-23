@@ -10,25 +10,31 @@ import {
 } from 'amazon-cognito-identity-js'
 
 class Cognito {
-    private CognitoUser: null | CognitoUser = null
-    private CognitoUserSession: null | CognitoUserSession = null
 
-    private CognitoUserPool = new CognitoUserPool({
-        UserPoolId: 'us-east-2_mq9DHmcKV',
-        ClientId: '1fd0gtvv1usfus4ooeq9rdreq'
-    })
+    private CognitoUserPool
+    private CognitoUser: CognitoUser | null = null
+    private CognitoUserSession: CognitoUserSession | null = null
 
-    private CacheTokens = (cognitoUserSession: CognitoUserSession, username: string) => {
-        const keyPrefix = `CognitoIdentityServiceProvider.${this.CognitoUserPool.getClientId()}`
-        const idTokenKey = `${keyPrefix}.idToken`
-        const accessTokenKey = `${keyPrefix}.accessToken`
-        const refreshTokenKey = `${keyPrefix}.refreshToken`
-        const lastUserKey = `${keyPrefix}.LastAuthUser`
-
-        localStorage.setItem(idTokenKey, cognitoUserSession.getIdToken().getJwtToken())
-        localStorage.setItem(accessTokenKey, cognitoUserSession.getAccessToken().getJwtToken())
-        localStorage.setItem(refreshTokenKey, cognitoUserSession.getRefreshToken().getToken())
-        localStorage.setItem(lastUserKey, username)
+    constructor () { 
+        const ClientId = '1fd0gtvv1usfus4ooeq9rdreq'
+        const LastAuthUser = localStorage.getItem(`CognitoIdentityServiceProvider.${ClientId}.LastAuthUser`)
+        this.CognitoUserPool = new CognitoUserPool({
+            UserPoolId: 'us-east-2_mq9DHmcKV',
+            ClientId: ClientId
+        })
+        try {
+            this.CognitoUser = new CognitoUser({ Username: LastAuthUser || '', Pool: this.CognitoUserPool })
+        } catch (err) {
+            this.CognitoUser = null
+        }
+        if (this.CognitoUser) {
+            this.CognitoUser.getSession((err: any, session: CognitoUserSession) => {
+                if (err)
+                    this.CognitoUserSession = null
+                else
+                    this.CognitoUserSession = session
+            })
+        }
     }
 
     public SignIn = (username: string, password: string): Promise<CognitoUserAttribute[] | null> => {
@@ -41,8 +47,6 @@ class Cognito {
                 onSuccess: (result) => {
                     resolve(this.GetUser())
                     this.CognitoUserSession = result
-                    this.CacheTokens(result, username)
-                    console.log(result)
                 },
                 newPasswordRequired: (userAttributes) => {
                     reject({
@@ -59,8 +63,9 @@ class Cognito {
 
     public GetUser = (): Promise<CognitoUserAttribute[] | null> => {
         return new Promise((resolve, reject) => {
-            if (!this.CognitoUser)
+            if (!this.CognitoUser) {
                 return resolve(null)
+            }
             this.CognitoUser.getUserAttributes((err, result) => {
                 if (err) {
                     if (err.message === "User is not authenticated")
@@ -81,54 +86,9 @@ class Cognito {
         this.CognitoUser.completeNewPasswordChallenge(newPassword, userAttributes, {
             onSuccess: (result) => {
                 this.CognitoUserSession = result
-                this.CacheTokens(result, userAttributes.email)
             },
             onFailure: (err) => {
                 console.log(err)
-            }
-        })
-    }
-
-    // Get the user's session, used when user closes + reopens web application
-    public GetSession = (): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
-            const keyPrefix = `CognitoIdentityServiceProvider.${this.CognitoUserPool.getClientId()}`
-            const idTokenKey = `${keyPrefix}.idToken`
-            const accessTokenKey = `${keyPrefix}.accessToken`
-            const refreshTokenKey = `${keyPrefix}.refreshToken`
-            const lastUserKey = `${keyPrefix}.LastAuthUser`
-
-            const idToken = new CognitoIdToken({ IdToken: localStorage.getItem(idTokenKey) || '' })
-            const accessToken = new CognitoAccessToken({ AccessToken: localStorage.getItem(accessTokenKey) || '' })
-            const refreshToken = new CognitoRefreshToken({ RefreshToken: localStorage.getItem(refreshTokenKey) || '' })
-
-            const cachedSession = new CognitoUserSession({
-                IdToken: idToken,
-                AccessToken: accessToken,
-                RefreshToken: refreshToken
-            })
-
-            if (cachedSession.isValid()) {
-                this.CognitoUserSession = cachedSession
-                resolve(true)
-            } else {
-                this.CognitoUser = new CognitoUser({
-                    Username: localStorage.getItem(lastUserKey) || '',
-                    Pool: this.CognitoUserPool
-                })
-                this.CognitoUser.refreshSession(refreshToken, (err, res) => {
-                    if (err) {
-                        if (err.code === "InvalidParameterException" && err.message === "Missing required parameter REFRESH_TOKEN") {
-                            this.CognitoUserSession = null
-                            resolve(false)
-                        } else {
-                            reject(err)
-                        }
-                    } else {
-                        this.CognitoUserSession = res
-                        resolve(true)
-                    }
-                })
             }
         })
     }

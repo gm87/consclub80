@@ -19,16 +19,10 @@ const App = () => {
     const [cognitoUser, setCognitoUser] = useState<CognitoUserAttribute[] | null>(null)
 
     useEffect(() => {
-        cognito.GetSession()
-        .then(valid_session => {
-            if (valid_session) {
-                console.log('valid session')
-                cognito.GetUser()
-                .then(user => {
-                    console.log(user)
-                    setCognitoUser(user)
-                })
-            }
+        cognito.GetUser()
+        .then(user => {
+            console.log(user)
+            setCognitoUser(user)
         })
     }, [])
 
