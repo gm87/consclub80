@@ -10,7 +10,7 @@ import CognitoUserAttributes from "../../models/CognitoUserAttributes"
 interface LoginProps {
     user: CognitoUserAttributes | null
     signIn: (username: string, password: string) => Promise<any>
-    changePassword: (newPassword: string, userAttributes: any) => void
+    changePassword: (newPassword: string, userAttributes: any) => Promise<'Success'>
 }
 
 const Login = ({ user, signIn, changePassword }: LoginProps) => {
@@ -29,7 +29,6 @@ const Login = ({ user, signIn, changePassword }: LoginProps) => {
             if (err.message === "Incorrect username or password.") {
                 setError(`Incorrect username or password.`)
             } else if (err.message === "New password required.") {
-                console.log('got here')
                 setNewPasswordRequired(true)
                 setUserAttributes(err.userAttributes)
             } else {
@@ -43,8 +42,18 @@ const Login = ({ user, signIn, changePassword }: LoginProps) => {
         let _userAttributes = { ...userAttributes, family_name: "Matthews", given_name: "Graham" }
         delete _userAttributes.email_verified
         delete _userAttributes.phone_number_verified
-        console.log(_userAttributes)
+        if (newPassword.new_password !== newPassword.new_password_confirm)
+            return setError('Passwords do not match')
         changePassword(newPassword.new_password, _userAttributes)
+        .catch(err => {
+            if (err.message === "Password does not conform to policy: Password must have uppercase characters" ||
+                err.message === "Password does not conform to policy: Password must have symbol characters" ||
+                err.message === "Password does not conform to policy: Password not long enough" ||
+                err.message === "Password does not conform to policy: Password must have lowercase characterss")
+                setError(err.message)
+            else
+                console.error(err)
+        })
     }
 
     const handlePasswordKeyUp = (e: any) => {

@@ -15,6 +15,7 @@ import MyAccount from './pages/MyAccount'
 import './styles/bootstrap.min.css'
 import AuthRequiredRoute from './components/AuthRequiredRoute'
 import NoAuthRoute from './components/NoAuthRoute'
+import ResetPassword from './pages/auth/ResetPassword'
 
 const App = () => {
 
@@ -50,6 +51,24 @@ const App = () => {
         setCognitoUser({ pending: false, data: null })
     }
 
+    const changePassword = (newPassword: string, userAttributes: any): Promise<'Success'> => {
+        return new Promise((resolve, reject) => {
+            cognito.ChangePassword(newPassword, userAttributes)
+            .then(async() => {
+                const user = await cognito.GetUser()
+                let _user: any = {}
+                if (!user)
+                    return setCognitoUser({ pending: false, data: null })
+                for (const attribute of user) {
+                    _user[attribute.Name] = attribute.Value
+                }
+                setCognitoUser({ pending: false, data: _user })
+                resolve('Success')
+            })
+            .catch(err => reject(err))
+        })
+    }
+
     return (
         <Router>
             <Routes>
@@ -58,8 +77,9 @@ const App = () => {
                 <Route path='/sponsorship' element={<SponsorshipForm user={cognitoUser.data} />} />
                 <Route path='/bylaws' element={<Bylaws user={cognitoUser.data} />} />
                 <Route path='/rules' element={<Rules user={cognitoUser.data} />} />
-                <Route path='/auth/login' element={<NoAuthRoute user={cognitoUser}><Login user={cognitoUser.data} signIn={signIn} changePassword={cognito.ChangePassword} /></NoAuthRoute>} />
-                <Route path='/auth/forgot-password' element={<NoAuthRoute user={cognitoUser}><ForgotPassword user={cognitoUser.data} /></NoAuthRoute>} />
+                <Route path='/auth/login' element={<NoAuthRoute user={cognitoUser}><Login user={cognitoUser.data} signIn={signIn} changePassword={changePassword} /></NoAuthRoute>} />
+                <Route path='/auth/forgot-password' element={<NoAuthRoute user={cognitoUser}><ForgotPassword user={cognitoUser.data} sendForgotPasswordEmail={cognito.SendForgotPasswordEmail} /></NoAuthRoute>} />
+                <Route path='/auth/reset-password' element={<NoAuthRoute user={cognitoUser}><ResetPassword user={cognitoUser.data} completeForgotPassword={cognito.CompleteForgotPassword} /></NoAuthRoute>} />
                 <Route path='/myaccount' element={<AuthRequiredRoute user={cognitoUser}><MyAccount user={cognitoUser.data} signOut={signOut} /></AuthRequiredRoute>} />
             </Routes>
         </Router>

@@ -7,12 +7,12 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import CognitoUserAttributes from "../../models/CognitoUserAttributes"
 
-interface LoginProps {
+interface ResetPasswordProps {
     user: CognitoUserAttributes | null
-    sendForgotPasswordEmail: (email: string) => void
+    completeForgotPassword: (email: string, code: string, newPassword: string) => Promise<any>
 }
 
-const ForgotPassword = ({ user, sendForgotPasswordEmail }: LoginProps) => {
+const ResetPassword = ({ user, completeForgotPassword }: ResetPasswordProps) => {
 
     const [username, setUsername] = useState<string>('')
     const [userAttributes, setUserAttributes] = useState<any>(null)
@@ -24,7 +24,6 @@ const ForgotPassword = ({ user, sendForgotPasswordEmail }: LoginProps) => {
     }
 
     const handleSubmit = () => {
-        sendForgotPasswordEmail(username)
 
     }
 
@@ -56,4 +55,4 @@ const ForgotPassword = ({ user, sendForgotPasswordEmail }: LoginProps) => {
     )
 }
 
-export default ForgotPassword
+export default ResetPassword

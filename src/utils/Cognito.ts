@@ -80,17 +80,23 @@ class Cognito {
         })
     }
 
-    public ChangePassword = (newPassword: string, userAttributes: any) => {
+    public ChangePassword = (newPassword: string, userAttributes: any): Promise<'Success'> => {
         if (!this.CognitoUser)
             throw new Error(`Cognito User not initialized.`)
-        this.CognitoUser.completeNewPasswordChallenge(newPassword, userAttributes, {
-            onSuccess: (result) => {
-                this.CognitoUserSession = result
-            },
-            onFailure: (err) => {
-                console.log(err)
-            }
+        return new Promise((resolve, reject) => {
+            if (!this.CognitoUser)
+                return reject(`Cognito User not initialized.`)
+            this.CognitoUser.completeNewPasswordChallenge(newPassword, userAttributes, {
+                onSuccess: (result) => {
+                    this.CognitoUserSession = result
+                    resolve('Success')
+                },
+                onFailure: (err) => {
+                    reject(err)
+                }
+            })
         })
+        
     }
 
     public SignOut = () => {
@@ -99,6 +105,38 @@ class Cognito {
         this.CognitoUser.signOut()
         this.CognitoUser = null
         this.CognitoUserSession = null
+    }
+
+    public SendForgotPasswordEmail = (email: string) => {
+        const cognitoUser = new CognitoUser({
+            Username: email,
+            Pool: this.CognitoUserPool
+        })
+        cognitoUser.forgotPassword({
+            onSuccess: (result) => {
+                console.log(result)
+            },
+            onFailure: (err) => {
+                console.error(err)
+            }
+        })
+    }
+
+    public CompleteForgotPassword = (email: string, verificationCode: string, newPassword: string) => {
+        const cognitoUser = new CognitoUser({
+            Username: email,
+            Pool: this.CognitoUserPool
+        })
+        return new Promise((resolve, reject) => {
+            cognitoUser.confirmPassword(verificationCode, newPassword, {
+                onFailure: (err) => {
+                    reject(err)
+                },
+                onSuccess: (data) => {
+                    resolve(data)
+                }
+            })
+        })
     }
 }
 
