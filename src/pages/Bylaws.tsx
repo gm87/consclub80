@@ -2,10 +2,15 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import SidebarWithContent from "../layouts/SidebarWithContent"
+import { CognitoUserAttribute } from "amazon-cognito-identity-js"
 
-const Bylaws = () => {
+interface BylawsProps {
+    user: CognitoUserAttribute[] | null
+}
+
+const Bylaws = ({ user }: BylawsProps) => {
     return (
-        <SidebarWithContent>
+        <SidebarWithContent user={user}>
             <Container fluid className="bg-light h-100 pe-5">
                 <Row>
                     <Col><h1 className="display-1 fs-1 text-center mt-3">Bylaws</h1></Col>

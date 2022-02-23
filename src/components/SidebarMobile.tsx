@@ -1,3 +1,4 @@
+import { CognitoUserAttribute } from "amazon-cognito-identity-js"
 import { useState } from "react"
 import Button from "react-bootstrap/Button"
 import { Link } from "react-router-dom"
@@ -6,6 +7,10 @@ interface SidebarLinkProps {
     href: string
     name: string
     Icon: any
+}
+
+interface SidebarMobileProps {
+    user: CognitoUserAttribute[] | null
 }
 
 const HamburgerIcon = () => {
@@ -70,7 +75,7 @@ const MobileSidebarLinkIconOnly = ({ href, name, Icon }: SidebarLinkProps) => {
     )
 }
 
-const SidebarMobile = () => {
+const SidebarMobile = ({ user }: SidebarMobileProps) => {
     const [collapsed, setCollapsed] = useState<boolean>(true)
 
     const links: SidebarLinkProps[] = [

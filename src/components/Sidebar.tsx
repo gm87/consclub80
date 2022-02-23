@@ -1,9 +1,14 @@
+import { CognitoUserAttribute } from "amazon-cognito-identity-js"
 import { Link } from "react-router-dom"
 
 interface SidebarLinkProps {
     href: string
     name: string
     Icon: any
+}
+
+interface SidebarProps {
+    user: CognitoUserAttribute[] | null
 }
 
 const HomeIcon = () => {
@@ -51,7 +56,7 @@ const SidebarLink = ({ href, name, Icon }: SidebarLinkProps) => {
     )
 }
 
-const Sidebar = () => {
+const Sidebar = ({ user }: SidebarProps) => {
 
     const links: SidebarLinkProps[] = [
         {

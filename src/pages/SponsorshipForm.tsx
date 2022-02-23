@@ -8,6 +8,11 @@ import SidebarWithContent from "../layouts/SidebarWithContent"
 import States from "../assets/states.json"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { CognitoUserAttribute } from "amazon-cognito-identity-js"
+
+interface SponsorshipFormProps {
+    user: CognitoUserAttribute[] | null
+}
 
 interface SponsorshipFormData {
     SponsorName: string
@@ -25,7 +30,7 @@ interface SponsorshipFormData {
     Reasons: string
 }
 
-const SponsorshipForm = () => {
+const SponsorshipForm = ({ user }: SponsorshipFormProps) => {
 
     const [error, setError] = useState<string[] | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
@@ -113,7 +118,7 @@ const SponsorshipForm = () => {
 
     if (success) {
         return (
-            <SidebarWithContent>
+            <SidebarWithContent user={user}>
                 <Container fluid className="bg-light h-100">
                     <Row>
                         <Col><h1 className="display-1 fs-1 text-center text-success mt-3">Success!</h1></Col>
@@ -133,7 +138,7 @@ const SponsorshipForm = () => {
 
     if (loading) {
         return (
-            <SidebarWithContent>
+            <SidebarWithContent user={user}>
                 <Container fluid className="bg-light h-100">
                     <Row className="py-5">
                         <Col className="text-center">
@@ -151,7 +156,7 @@ const SponsorshipForm = () => {
     }
 
     return (
-        <SidebarWithContent>
+        <SidebarWithContent user={user}>
             <Container fluid className="bg-light h-100">
                 <Modal show={!!error} onHide={() => setError(null)}>
                     <Modal.Header closeButton>
