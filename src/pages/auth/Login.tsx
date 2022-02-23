@@ -1,14 +1,14 @@
 import SidebarWithContent from "../../layouts/SidebarWithContent"
-import { CognitoUserAttribute } from "amazon-cognito-identity-js"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import CognitoUserAttributes from "../../models/CognitoUserAttributes"
 
 interface LoginProps {
-    user: CognitoUserAttribute[] | null
+    user: CognitoUserAttributes | null
     signIn: (username: string, password: string) => Promise<any>
     changePassword: (newPassword: string, userAttributes: any) => void
 }

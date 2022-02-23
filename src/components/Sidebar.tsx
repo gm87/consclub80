@@ -1,5 +1,5 @@
-import { CognitoUserAttribute } from "amazon-cognito-identity-js"
 import { Link } from "react-router-dom"
+import CognitoUserAttributes from "../models/CognitoUserAttributes"
 import UserAccountSidebar from "./UserAccountSidebar"
 
 interface SidebarLinkProps {
@@ -9,7 +9,7 @@ interface SidebarLinkProps {
 }
 
 interface SidebarProps {
-    user: CognitoUserAttribute[] | null
+    user: CognitoUserAttributes | null
 }
 
 const HomeIcon = () => {

@@ -8,10 +8,10 @@ import SidebarWithContent from "../layouts/SidebarWithContent"
 import States from "../assets/states.json"
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { CognitoUserAttribute } from "amazon-cognito-identity-js"
+import CognitoUserAttributes from "../models/CognitoUserAttributes"
 
 interface SponsorshipFormProps {
-    user: CognitoUserAttribute[] | null
+    user: CognitoUserAttributes | null
 }
 
 interface SponsorshipFormData {

@@ -4,11 +4,11 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Sidebar from "../components/Sidebar";
 import SidebarMobile from "../components/SidebarMobile";
-import { CognitoUserAttribute } from "amazon-cognito-identity-js";
+import CognitoUserAttributes from "../models/CognitoUserAttributes";
 
 interface props {
     children: ReactNode
-    user: CognitoUserAttribute[] | null
+    user: CognitoUserAttributes | null
 }
 
 const SidebarWithContent = ({ user, children }: props) => {

@@ -2,10 +2,10 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import SidebarWithContent from "../layouts/SidebarWithContent"
-import { CognitoUserAttribute } from "amazon-cognito-identity-js"
+import CognitoUserAttributes from "../models/CognitoUserAttributes"
 
 interface HomeProps {
-    user: CognitoUserAttribute[] | null
+    user: CognitoUserAttributes | null
 }
 
 const Home = ({ user }: HomeProps) => {

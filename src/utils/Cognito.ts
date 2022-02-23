@@ -92,6 +92,14 @@ class Cognito {
             }
         })
     }
+
+    public SignOut = () => {
+        if (!this.CognitoUser)
+            return
+        this.CognitoUser.signOut()
+        this.CognitoUser = null
+        this.CognitoUserSession = null
+    }
 }
 
 export default Cognito

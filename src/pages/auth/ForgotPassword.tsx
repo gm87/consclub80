@@ -1,8 +1,8 @@
 import SidebarWithContent from "../../layouts/SidebarWithContent"
-import { CognitoUserAttribute } from "amazon-cognito-identity-js"
+import CognitoUserAttributes from "../../models/CognitoUserAttributes"
 
 interface ForgotPasswordProps {
-    user: CognitoUserAttribute[] | null
+    user: CognitoUserAttributes | null
 }
 
 const ForgotPassword = ({ user }: ForgotPasswordProps) => {
