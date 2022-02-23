@@ -13,22 +13,24 @@ import ForgotPassword from './pages/auth/ForgotPassword'
 import MyAccount from './pages/MyAccount'
 
 import './styles/bootstrap.min.css'
+import AuthRequiredRoute from './components/AuthRequiredRoute'
+import NoAuthRoute from './components/NoAuthRoute'
 
 const App = () => {
 
     const cognito = new Cognito()
-    const [cognitoUser, setCognitoUser] = useState<CognitoUserAttributes | null>(null)
+    const [cognitoUser, setCognitoUser] = useState<{ pending: boolean, data: CognitoUserAttributes | null }>({ pending: true, data: null })
 
     useEffect(() => {
         cognito.GetUser()
         .then(user => {
             let _user: any = {}
             if (!user)
-                return setCognitoUser(null)
+                return setCognitoUser({ pending: false, data: null })
             for (const attribute of user) {
                 _user[attribute.Name] = attribute.Value
             }
-            setCognitoUser(_user)
+            setCognitoUser({ pending: false, data: _user })
         })
     }, [])
 
@@ -36,29 +38,29 @@ const App = () => {
         const user = await cognito.SignIn(email, password)
         let _user: any = {}
         if (!user)
-            return setCognitoUser(null)
+            return setCognitoUser({ pending: false, data: null })
         for (const attribute of user) {
             _user[attribute.Name] = attribute.Value
         }
-        setCognitoUser(_user)
+        setCognitoUser({ pending: false, data: _user })
     }
 
     const signOut = async () => {
         cognito.SignOut()
-        setCognitoUser(null)
+        setCognitoUser({ pending: false, data: null })
     }
 
     return (
         <Router>
             <Routes>
-                <Route path='/' element={<Home user={cognitoUser} />} />
-                <Route path='/membership' element={<MembershipForm user={cognitoUser} />} />
-                <Route path='/sponsorship' element={<SponsorshipForm user={cognitoUser} />} />
-                <Route path='/bylaws' element={<Bylaws user={cognitoUser} />} />
-                <Route path='/rules' element={<Rules user={cognitoUser} />} />
-                <Route path='/auth/login' element={<Login user={cognitoUser} signIn={signIn} changePassword={cognito.ChangePassword} />} />
-                <Route path='/auth/forgot-password' element={<ForgotPassword user={cognitoUser} />} />
-                <Route path='/myaccount' element={<MyAccount user={cognitoUser} signOut={signOut} />} />
+                <Route path='/' element={<Home user={cognitoUser.data} />} />
+                <Route path='/membership' element={<MembershipForm user={cognitoUser.data} />} />
+                <Route path='/sponsorship' element={<SponsorshipForm user={cognitoUser.data} />} />
+                <Route path='/bylaws' element={<Bylaws user={cognitoUser.data} />} />
+                <Route path='/rules' element={<Rules user={cognitoUser.data} />} />
+                <Route path='/auth/login' element={<NoAuthRoute user={cognitoUser}><Login user={cognitoUser.data} signIn={signIn} changePassword={cognito.ChangePassword} /></NoAuthRoute>} />
+                <Route path='/auth/forgot-password' element={<NoAuthRoute user={cognitoUser}><ForgotPassword user={cognitoUser.data} /></NoAuthRoute>} />
+                <Route path='/myaccount' element={<AuthRequiredRoute user={cognitoUser}><MyAccount user={cognitoUser.data} signOut={signOut} /></AuthRequiredRoute>} />
             </Routes>
         </Router>
     )
