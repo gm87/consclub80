@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import CognitoUserAttributes from "../../models/CognitoUserAttributes"
 
@@ -34,7 +34,6 @@ const ForgotPassword = ({ user, sendForgotPasswordEmail, completeForgotPassword 
     const handleSubmit = () => {
         sendForgotPasswordEmail(username)
         .then(response => {
-            console.log(response)
             setCodeDeliveryDetails(response.CodeDeliveryDetails)
         })
         .catch(err => console.error(err))

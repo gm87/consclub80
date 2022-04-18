@@ -31,6 +31,7 @@ const App = () => {
             for (const attribute of user) {
                 _user[attribute.Name] = attribute.Value
             }
+            _user.groups = cognito.GetGroups()
             setCognitoUser({ pending: false, data: _user })
         })
     }, [])
@@ -43,6 +44,7 @@ const App = () => {
         for (const attribute of user) {
             _user[attribute.Name] = attribute.Value
         }
+        _user.groups = cognito.GetGroups()
         setCognitoUser({ pending: false, data: _user })
     }
 

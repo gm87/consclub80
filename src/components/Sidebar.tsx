@@ -48,11 +48,27 @@ const UserIcon = () => {
     )
 }
 
+const ContactsIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person-rolodex" viewBox="0 0 16 16">
+            <path d="M8 9.05a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+            <path d="M1 1a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h.5a.5.5 0 0 0 .5-.5.5.5 0 0 1 1 0 .5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5.5.5 0 0 1 1 0 .5.5 0 0 0 .5.5h.5a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H6.707L6 1.293A1 1 0 0 0 5.293 1H1Zm0 1h4.293L6 2.707A1 1 0 0 0 6.707 3H15v10h-.085a1.5 1.5 0 0 0-2.4-.63C11.885 11.223 10.554 10 8 10c-2.555 0-3.886 1.224-4.514 2.37a1.5 1.5 0 0 0-2.4.63H1V2Z"/>
+        </svg>
+    )
+}
+
 const SidebarLink = ({ href, name, Icon }: SidebarLinkProps) => {
     const currentPath = window.location.pathname
+    if (href[0] === '/') {
+        return (
+            <li className="nav-item d-flex">
+                <Link to={href} className={`nav-link ${href === currentPath ? 'active' : ''}`}><span className="my-auto me-2 text-white"><Icon /></span> {name}</Link>
+            </li>
+        )
+    }
     return (
         <li className="nav-item d-flex">
-            <Link to={href} className={`nav-link ${href === currentPath ? 'active' : ''}`}><span className="my-auto me-2 text-white"><Icon /></span> {name}</Link>
+            <a href={href} className={`nav-link ${href === currentPath ? 'active' : ''}`}><span className="my-auto me-2 text-white"><Icon /></span> {name}</a>
         </li>
     )
 }
@@ -84,6 +100,11 @@ const Sidebar = ({ user }: SidebarProps) => {
             href: '/rules',
             name: 'Member Rules',
             Icon: DocumentIcon
+        },
+        {
+            href: 'https://docs.google.com/spreadsheets/d/1gB5ah0iZbt4-rv7HTtiYfjNubaADTgkRAMxQf0PSHkA/edit#gid=0',
+            name: 'Members List',
+            Icon: ContactsIcon
         }
     ]
 

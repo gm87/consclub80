@@ -28,7 +28,7 @@ const Login = ({ user, signIn, changePassword }: LoginProps) => {
         .catch(err => {
             if (err.message === "Incorrect username or password.") {
                 setError(`Incorrect username or password.`)
-            } else if (err.message === "New password required.") {
+            } else if (err.message === "New password required." || err.message === "Password reset required for the user") {
                 setNewPasswordRequired(true)
                 setUserAttributes(err.userAttributes)
             } else {

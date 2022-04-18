@@ -3,10 +3,7 @@ import {
     CognitoUserSession, 
     CognitoUserPool, 
     AuthenticationDetails, 
-    CognitoUserAttribute, 
-    CognitoIdToken, 
-    CognitoRefreshToken, 
-    CognitoAccessToken 
+    CognitoUserAttribute
 } from 'amazon-cognito-identity-js'
 
 class Cognito {
@@ -78,6 +75,10 @@ class Cognito {
                 resolve(result)
             })
         })
+    }
+
+    public GetGroups = () => {
+        return this.CognitoUserSession?.getIdToken().payload['cognito:groups']
     }
 
     public ChangePassword = (newPassword: string, userAttributes: any): Promise<'Success'> => {

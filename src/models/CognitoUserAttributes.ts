@@ -6,4 +6,5 @@ export default interface CognitoUserAttributes {
     given_name: string
     family_name: string
     email: string
+    groups: string[]
 }
